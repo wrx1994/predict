@@ -40,7 +40,7 @@ def cal_train_past(time, id, slice_1,slice_2,slice_3,slice_4,slice_5,slice_6,sli
     # past_value_2 = [int(slice_1_value[1]),int(slice_2_value[1]),int(slice_3_value[1]),int(slice_4_value[1]),int(slice_5_value[1]),int(slice_6_value[1]),int(slice_7_value[1]),int(slice_8_value[1]),int(slice_9_value[1]),int(slice_10_value[1]),int(slice_11_value[1]),int(slice_12_value[1])]
     # past_value_3 = [int(slice_1_value[2]),int(slice_2_value[2]),int(slice_3_value[2]),int(slice_4_value[2]),int(slice_5_value[2]),int(slice_6_value[2]),int(slice_7_value[2]),int(slice_8_value[2]),int(slice_9_value[2]),int(slice_10_value[2]),int(slice_11_value[2]),int(slice_12_value[2])]
     # past_value_4 = [int(slice_1_value[3]),int(slice_2_value[3]),int(slice_3_value[3]),int(slice_4_value[3]),int(slice_5_value[3]),int(slice_6_value[3]),int(slice_7_value[3]),int(slice_8_value[3]),int(slice_9_value[3]),int(slice_10_value[3]),int(slice_11_value[3]),int(slice_12_value[3])]
-    type_list = [time,id,int(slice_1_value[0]),int(slice_2_value[0]),int(slice_3_value[0]),int(slice_4_value[0]),int(slice_5_value[0]),
+    type_list = [int(slice_1_value[0]),int(slice_2_value[0]),int(slice_3_value[0]),int(slice_4_value[0]),int(slice_5_value[0]),
                  int(slice_6_value[0]),int(slice_7_value[0]),int(slice_8_value[0]),int(slice_9_value[0]),int(slice_10_value[0]),
                  int(slice_11_value[0]),int(slice_12_value[0]),
                  int(slice_1_value[1]), int(slice_2_value[1]), int(slice_3_value[1]), int(slice_4_value[1]),
@@ -73,7 +73,7 @@ def cal_test(time, id, slice_1,slice_2,slice_3,slice_4,slice_5,slice_6,slice_7,s
     slice_10_value = slice_10.split(' ')
     slice_11_value = slice_11.split(' ')
     slice_12_value = slice_12.split(' ')
-    type_list = [time, id, int(slice_1_value[0]), int(slice_2_value[0]), int(slice_3_value[0]), int(slice_4_value[0]),
+    type_list = [int(slice_1_value[0]), int(slice_2_value[0]), int(slice_3_value[0]), int(slice_4_value[0]),
                  int(slice_5_value[0]),
                  int(slice_6_value[0]), int(slice_7_value[0]), int(slice_8_value[0]), int(slice_9_value[0]),
                  int(slice_10_value[0]),

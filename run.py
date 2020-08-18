@@ -8,7 +8,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from xgboost import plot_importance
 # from sklearn.preprocessing import Imputer换成下边的就可以
+
+from sklearn import metrics
 from sklearn.impute import SimpleImputer
+from sklearn.model_selection import train_test_split
+
 
 def get_parser():
     parser = argparse.ArgumentParser(description="Run in csvs")
@@ -31,24 +35,44 @@ def getAllCSV(folderPath):
     return outputLst
 
 def trainandTest(X_train, Y_train, X_test):
-        # XGBoost训练过程
-        model = xgb.XGBRegressor(max_depth=5, learning_rate=0.1, n_estimators=160, silent=False, objective='reg:gamma')
-        model.fit(X_train, Y_train)
+    params = {
+        'booster': 'gbtree',  # gbtree used
+        'objective': 'binary:logistic',
+        'early_stopping_rounds': 50,
+        'scale_pos_weight': 0.63,  # 正样本权重
+        'eval_metric': 'auc',
+        'gamma': 0,
+        'max_depth': 5,
+        # 'lambda': 550,
+        'subsample': 0.6,
+        'colsample_bytree': 0.9,
+        'min_child_weight': 1,
+        'eta': 0.02,
+        'seed': random_seed,
+        'nthread': 3,
+        'silent': 0
+    }
+    dtest = xgb.DMatrix(X_test)
+    dtrain = xgb.DMatrix(X_train,Y_train)
 
-        # 对测试集进行预测
-        ans = model.predict(X_test)
+    # XGBoost训练过程
+    model = xgb.XGBRegressor(max_depth=5, learning_rate=0.1, n_estimators=160, silent=False, objective='reg:gamma')
+    model.fit(X_train, Y_train)
 
-        ans_len = len(ans)
-        id_list = X_train['1']
-        data_arr = []
-        for row in range(0, ans_len):
-            data_arr.append([id_list[row], ans[row]])
-        np_data = np.array(data_arr)
+    # 对测试集进行预测
+    ans = model.predict(X_test)
+    print(ans)
+    ans_len = len(ans)
+    id_list = X_train['1']
+    data_arr = []
+    for row in range(0, ans_len):
+        data_arr.append([id_list[row], ans[row]])
+    np_data = np.array(data_arr)
 
-        # 写入文件
-        pd_data = pd.DataFrame(np_data, columns=['id', 'y'])
-        # print(pd_data)
-        pd_data.to_csv('submit.csv', index=None)
+    # 写入文件
+    pd_data = pd.DataFrame(np_data, columns=['id', 'y'])
+    # print(pd_data)
+    pd_data.to_csv('submit.csv', index=None)
 
 
 if __name__ == "__main__":
@@ -60,11 +84,11 @@ if __name__ == "__main__":
         # X为过去值，Y为未来预测值
         # x_train为dict，y_train为list
         x_train,y_train = csv_data_train(csv_path_train)
-        print(x_train)
-        print(y_train)
+        # print(x_train)
+        # print(y_train)
         for csv_path_test in csv_paths_test:
             print(csv_path_test)
             # x_test为dict
             x_test = csv_data_test(csv_path_test)
-            print(x_test)
-            # trainandTest(x_train, y_train,x_test)
+            # print(x_test)
+            trainandTest(x_train, y_train,x_test)

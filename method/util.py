@@ -8,8 +8,10 @@ def read_data_df_train(input_file):
 
 def read_data_train(input_file):
     datas = read_data_df_train(input_file)
-    return [list(datas[tmp]) for tmp in ["time", "id", "slice_1", "slice_2", "slice_3", "slice_4", "slice_5", "slice_6", "slice_7",
-        "slice_8", "slice_9", "slice_10", "slice_11", "slice_12", "predict_6"]]
+    #print("++++",datas)
+    return datas
+    # return [list(datas[tmp]) for tmp in ["time", "id", "slice_1", "slice_2", "slice_3", "slice_4", "slice_5", "slice_6", "slice_7",
+    #    "slice_8", "slice_9", "slice_10", "slice_11", "slice_12", "predict_6"]]
 
 def read_data_df_test(input_file):
     # sep=',' ，分割

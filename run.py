@@ -2,22 +2,18 @@
 import os
 import argparse
 import pandas as pd
-from method.pre import csv_data_train, csv_data_test
-import xgboost as xgb
 import numpy as np
-import matplotlib.pyplot as plt
-from xgboost import plot_importance
+from method.pre import csv_data_train, csv_data_test
 # from sklearn.preprocessing import Imputer换成下边的就可以
+import xgboost as xgb
+from xgb import trainandTest
 
-from sklearn import metrics
-from sklearn.impute import SimpleImputer
-from sklearn.model_selection import train_test_split
 
 
 def get_parser():
     parser = argparse.ArgumentParser(description="Run in csvs")
-    parser.add_argument("--csvTrain", default="/Users/ruoxi/didi/在弦上/在弦上2020实战2班3班/在弦上2020实战2班3班/实战3班/train/", help="path to csv folder")
-    parser.add_argument("--csvTest", default="/Users/ruoxi/didi/在弦上/在弦上2020实战2班3班/在弦上2020实战2班3班/实战3班/test1/", help="path to csv folder")
+    parser.add_argument("--csvTrain", default="/Users/didi/project/predict/train/", help="path to csv folder")
+    parser.add_argument("--csvTest", default="/Users/didi/project/predict/test1/", help="path to csv folder")
 
     return parser
 
@@ -34,61 +30,43 @@ def getAllCSV(folderPath):
         outputLst.append(csv_path)
     return outputLst
 
-def trainandTest(X_train, Y_train, X_test):
-    params = {
-        'booster': 'gbtree',  # gbtree used
-        'objective': 'binary:logistic',
-        'early_stopping_rounds': 50,
-        'scale_pos_weight': 0.63,  # 正样本权重
-        'eval_metric': 'auc',
-        'gamma': 0,
-        'max_depth': 5,
-        # 'lambda': 550,
-        'subsample': 0.6,
-        'colsample_bytree': 0.9,
-        'min_child_weight': 1,
-        'eta': 0.02,
-        'seed': random_seed,
-        'nthread': 3,
-        'silent': 0
-    }
-    dtest = xgb.DMatrix(X_test)
-    dtrain = xgb.DMatrix(X_train,Y_train)
 
-    # XGBoost训练过程
-    model = xgb.XGBRegressor(max_depth=5, learning_rate=0.1, n_estimators=160, silent=False, objective='reg:gamma')
-    model.fit(X_train, Y_train)
+def test_model():
+    w = pd.DataFrame({17, 10, 100, 100, 64.639999, 7, 0, 0, 0, 0, 7, 6, 13, 12, 11.545455, 11.454545, 7, 6, 13, 12, 11.545455, 11.454545, 610, 610, 5, 5, 1, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+                      0.66290897, 0.94605702, 1.7, 900, 1, 1, 0, 11625, 8576, 1, 1, 1, -1, -1, -1, -1, -1, -1})
+    xx = xgb.DMatrix(w)
+    bst_new = xgb.Booster({'nthread': 4})  # init model
+    bst_new.load_model("model/xgboost_v1.3.model")
+    bst_new.predict(xx)
 
-    # 对测试集进行预测
-    ans = model.predict(X_test)
-    print(ans)
-    ans_len = len(ans)
-    id_list = X_train['1']
-    data_arr = []
-    for row in range(0, ans_len):
-        data_arr.append([id_list[row], ans[row]])
-    np_data = np.array(data_arr)
-
-    # 写入文件
-    pd_data = pd.DataFrame(np_data, columns=['id', 'y'])
-    # print(pd_data)
-    pd_data.to_csv('submit.csv', index=None)
 
 
 if __name__ == "__main__":
+
+    #test_model()
     args = get_parser().parse_args()
     csv_paths_train = getAllCSV(args.csvTrain)
     csv_paths_test = getAllCSV(args.csvTest)
+    X_train = pd.DataFrame()
+    Y_train = pd.DataFrame()
+    X_test = pd.DataFrame()
+    cnt1=0;cnt2 =0
     for csv_path_train in csv_paths_train:
         print(csv_path_train)
-        # X为过去值，Y为未来预测值
-        # x_train为dict，y_train为list
-        x_train,y_train = csv_data_train(csv_path_train)
-        # print(x_train)
-        # print(y_train)
-        for csv_path_test in csv_paths_test:
-            print(csv_path_test)
-            # x_test为dict
-            x_test = csv_data_test(csv_path_test)
-            # print(x_test)
-            trainandTest(x_train, y_train,x_test)
+        if(cnt1==1):
+            break
+        cnt1+=1
+        x_train, y_train = csv_data_train(csv_path_train)
+        X_train = pd.concat([X_train, x_train], axis=0)
+        Y_train = pd.concat([Y_train, y_train], axis=0)
+        #print(X_train)
+    for csv_path_test in csv_paths_test:
+        print(csv_path_test)
+        if (cnt2 == 1):
+            break
+        cnt2 += 1
+        x_test = csv_data_test(csv_path_test)
+        X_test = pd.concat([X_test, x_test], axis=0)
+    #print(np.shape(X_train))
+    print(X_train.columns.tolist)
+    trainandTest(X_train, Y_train, X_test)

@@ -59,12 +59,12 @@ if __name__ == "__main__":
         print(csv_path_train)
         # X为过去值，Y为未来预测值
         # x_train为dict，y_train为list
-        x_train, y_train = csv_data_train(csv_path_train)
-        # print(x_train)
-        # print(y_train)
+        x_train,y_train = csv_data_train(csv_path_train)
+        print(x_train)
+        print(y_train)
         for csv_path_test in csv_paths_test:
             print(csv_path_test)
             # x_test为dict
             x_test = csv_data_test(csv_path_test)
-            # print(x_test)
-            trainandTest(x_train, y_train,x_test)
+            print(x_test)
+            # trainandTest(x_train, y_train,x_test)

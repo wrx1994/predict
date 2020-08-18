@@ -3,7 +3,7 @@
 # from sklearn.model_selection import train_test_split
 import pandas as pd
 import numpy as np
-from .util import read_data_train, read_data_test, cal_past, cal_future
+from .util import read_data_train, read_data_test, cal_train_future,cal_train_past, cal_test
 
 def csv_data_train(csv_paths_train):
     time, id, slice_1, slice_2, slice_3, slice_4, slice_5, slice_6, slice_7, slice_8, slice_9, slice_10, slice_11, \
@@ -25,14 +25,12 @@ def csv_data_train(csv_paths_train):
     df['slice_11'] = np.array(slice_11).T
     df['slice_12'] = np.array(slice_12).T
     df['predict_6'] = np.array(predict_6).T
-
     #输出的time，id是字符串，其余是int类型
-    input_past = df.apply(lambda x: cal_past(x['time'],x['id'],x['slice_1'],x['slice_2'],x['slice_3'],x['slice_4'],x['slice_5'],
+    df_result_X = df.apply(lambda x: cal_train_past(x['time'],x['id'],x['slice_1'],x['slice_2'],x['slice_3'],x['slice_4'],x['slice_5'],
                            x['slice_6'],x['slice_7'],x['slice_8'],x['slice_9'],x['slice_10'],x['slice_11'],
                            x['slice_12']),axis=1)
-    input_future = df.apply(lambda x: cal_future(x['predict_6']),axis=1)
-
-    return input_past, input_future
+    df_result_Y = df.apply(lambda x: cal_train_future(x["predict_6"]),axis=1)
+    return df_result_X,df_result_Y
 
 
 def csv_data_test(csv_path_test):
@@ -52,7 +50,7 @@ def csv_data_test(csv_path_test):
     df['slice_10'] = np.array(slice_10).T
     df['slice_11'] = np.array(slice_11).T
     df['slice_12'] = np.array(slice_12).T
-    input_past = df.apply(lambda x: cal_past(x['time'], x['id'], x['slice_1'], x['slice_2'], x['slice_3'], x['slice_4'], x['slice_5'],
+    df_result = df.apply(lambda x: cal_test(x['time'], x['id'], x['slice_1'], x['slice_2'], x['slice_3'], x['slice_4'], x['slice_5'],
                            x['slice_6'], x['slice_7'], x['slice_8'], x['slice_9'], x['slice_10'], x['slice_11'],
                            x['slice_12']), axis=1)
-    return df['time'],df['id'],input_past
+    return df_result

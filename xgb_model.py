@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import datetime
 from sklearn.model_selection import KFold, StratifiedKFold
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, mean_absolute_error
 import random
 import matplotlib.pyplot as plt
 from xgboost import plot_importance
@@ -12,7 +12,24 @@ from sklearn import metrics
 from sklearn.impute import SimpleImputer
 from sklearn.model_selection import train_test_split
 
-def trainandTest(X, Y, X_test, random_seed=12):
+
+def saveModel(model):
+    curr_time = datetime.datetime.now()
+    time_str = datetime.datetime.strftime(curr_time, '%Y-%m-%d-%H-%M-%S')
+    model_name = 'model/xgb-' + time_str + ".model"
+    model.save_model(model_name)
+
+
+
+
+
+
+
+
+
+
+
+def trainModel(X, Y, random_seed=12):
     params = {
         'booster': 'gbtree',  # gbtree used
         'objective': 'binary:logistic',
@@ -54,22 +71,13 @@ def trainandTest(X, Y, X_test, random_seed=12):
         predict_Y.extend(predict_label)
 
     mse_split = mean_squared_error(Y['label_1'].values, predict_Y)
-    print(mse_split)
+    mae = mean_absolute_error(Y['label_1'].values, predict_Y)
+    print("mean_squared_error:", mse_split)
+    print("mean_absolute_error", mae )
 
-    # id_list = X_train.index
-    # data_arr = []
-    # for row in range(0, len(predict_Y)):
-    #     data_arr.append([id_list[row], predict_Y[row]])
-    # np_data = np.array(data_arr)
-    #
-    # #写入文件
-    # pd_data = pd.DataFrame(np_data, columns=['id', 'y'])
-    # # print(pd_data)
-    # pd_data.to_csv('submit.csv', index=None)
-    #
-    curr_time = datetime.datetime.now()
-    time_str = datetime.datetime.strftime(curr_time, '%Y-%m-%d-%H-%M-%S')
-    model_name = 'model/xgb-' + time_str + ".model"
-    model.save_model(model_name)
+    return model
+
+
+
 
 
